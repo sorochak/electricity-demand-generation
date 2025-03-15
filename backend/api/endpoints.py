@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from services.eia_service import get_eia_grid_mix_timeseries
 
 router = APIRouter()
