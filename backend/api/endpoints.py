@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
+import logging
+import pandas as pd
 from backend.services.eia_service import get_eia_grid_mix_timeseries
 
 router = APIRouter()
@@ -37,5 +39,14 @@ def fetch_grid_mix(
         }
     ]
     """
-    data = get_eia_grid_mix_timeseries([balancing_authority])
-    return data.to_dict(orient="records") # Convert DataFrame to JSON
+    try:
+        data = get_eia_grid_mix_timeseries([balancing_authority])
+
+        if data.empty:
+            raise HTTPException(status_code=404, detail="No data found for the given balancing authority.")
+
+        return data.to_dict(orient="records")  # Convert DataFrame to JSON
+    
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")

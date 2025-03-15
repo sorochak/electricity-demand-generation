@@ -40,51 +40,60 @@ def get_eia_timeseries(
 
     logging.info(f"Fetching data from: {api_url}")
 
-    response_content = requests.get(
-        api_url,
-        headers={
-            "X-Params": json.dumps(
-                {
-                    "frequency": "daily",
-                    "data": ["value"],
-                    "facets": dict(**{"timezone": ["Pacific"]}, **facets),
-                    "start": start_date,
-                    "end": end_date,
-                    "sort": [{"column": "period", "direction": "desc"}],
-                    "offset": offset,
-                    "length": max_row_count,
-                }
-            )
-        },
-    ).json()
+    try:
+        response = requests.get(
+            api_url,
+            headers={
+                "X-Params": json.dumps(
+                    {
+                        "frequency": "daily",
+                        "data": ["value"],
+                        "facets": dict(**{"timezone": ["Pacific"]}, **facets),
+                        "start": start_date,
+                        "end": end_date,
+                        "sort": [{"column": "period", "direction": "desc"}],
+                        "offset": offset,
+                        "length": max_row_count,
+                    }
+                )
+            },
+            timeout=10,  # Set a timeout to prevent hanging requests
+        )
+        response.raise_for_status()  # Raise an error for HTTP failures (4xx, 5xx)
 
-    if "response" in response_content:
-        response_content = response_content["response"]
-    else:
-        logging.error("Invalid API response format")
+        response_content = response.json()
+        if "response" not in response_content:
+            logging.error("Invalid API response format")
+            return pd.DataFrame()  # Return an empty DataFrame on failure
+
+        logging.info(f"Fetched {len(response_content['response']['data'])} rows.")
+
+        dataframe = pd.DataFrame(response_content["response"]["data"])
+        dataframe["timestamp"] = pd.to_datetime(dataframe["period"], errors="coerce")
+        processed_df = dataframe.astype({"value": float}).rename(columns={"value": value_column_name})
+
+        # Pagination logic
+        rows_fetched = len(processed_df) + offset
+        rows_total = int(response_content["response"]["total"])
+        if rows_fetched != rows_total:
+            additional_rows = get_eia_timeseries(
+                url_segment=url_segment,
+                facets=facets,
+                value_column_name=value_column_name,
+                start_date=start_date,
+                end_date=end_date,
+                start_page=start_page + 1,
+            )
+            return pd.concat([processed_df, additional_rows])
+        return processed_df
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error fetching data from EIA API: {e}")
         return pd.DataFrame()
 
-    logging.info(f"Fetched {len(response_content['data'])} rows.")
-
-    dataframe = pd.DataFrame(response_content["data"])
-    dataframe["timestamp"] = pd.to_datetime(dataframe["period"], errors="coerce")
-    processed_df = dataframe.astype({"value": float}).rename(columns={"value": value_column_name})
-
-    # Pagination logic
-    rows_fetched = len(processed_df) + offset
-    rows_total = int(response_content["total"])
-    if rows_fetched != rows_total:
-        additional_rows = get_eia_timeseries(
-            url_segment=url_segment,
-            facets=facets,
-            value_column_name=value_column_name,
-            start_date=start_date,
-            end_date=end_date,
-            start_page=start_page + 1,
-        )
-        return pd.concat([processed_df, additional_rows])
-    else:
-        return processed_df
+    except ValueError as e:
+        logging.error(f"Data processing error: {e}")
+        return pd.DataFrame()
     
 def get_eia_grid_mix_timeseries(balancing_authorities, **kwargs):
     """
