@@ -67,7 +67,7 @@ def get_eia_timeseries(
     logging.info(f"Fetched {len(response_content['data'])} rows.")
 
     dataframe = pd.DataFrame(response_content["data"])
-    dataframe["timestamp"] = dataframe["period"].apply(pd.to_datetime, format="%Y/%m/%dT%H")
+    dataframe["timestamp"] = pd.to_datetime(dataframe["period"], errors="coerce")
     processed_df = dataframe.astype({"value": float}).rename(columns={"value": value_column_name})
 
     # Pagination logic
