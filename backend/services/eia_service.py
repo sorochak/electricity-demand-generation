@@ -3,7 +3,7 @@ import json
 import requests
 import pandas as pd
 import logging
-from config import EIA_API_KEY
+from backend.config import EIA_API_KEY
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
