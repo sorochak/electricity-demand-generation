@@ -118,6 +118,7 @@ def get_eia_net_demand_and_generation_timeseries(balancing_authorities, **kwargs
     )
 
 def get_eia_interchange_timeseries(balancing_authorities, **kwargs):
+
     """
     Fetches electricity interchange data (imports & exports) for specified balancing authorities.
     """
@@ -127,3 +128,56 @@ def get_eia_interchange_timeseries(balancing_authorities, **kwargs):
         value_column_name="Interchange (MWh)",
         **kwargs
     )
+
+def get_balancing_authorities():
+    """
+    Fetches a list of unique balancing authorities from the EIA API.
+    """
+
+    if not EIA_API_KEY:
+        logging.error("EIA API key not found.")
+        return {"error": "API key not found."}
+
+    api_url = f"https://api.eia.gov/v2/electricity/rto/region-data/data/"
+    params = {
+        "api_key": EIA_API_KEY,
+        "frequency": "hourly",
+        "length": 5000,  # Max batch size
+    }
+
+    balancing_authorities = set()
+
+    try:
+        logging.info("Requesting data from EIA API")
+        response = requests.get(api_url, params=params, timeout=10)
+        response.raise_for_status()  # Raise an error for HTTP failures (4xx, 5xx)
+
+        data = response.json()
+
+        # Check for valid response format
+        if "response" not in data or "data" not in data["response"]:
+            logging.error("Invalid API response format")
+            return {"error": "Invalid API response format"}
+
+        records = data["response"]["data"]
+
+        # Extract unique balancing authorities
+        for record in records:
+            ba = record.get("respondent")
+            if ba:
+                balancing_authorities.add(ba)
+
+    except requests.exceptions.Timeout:
+        logging.error("EIA API request timed out.")
+        return {"error": "EIA API request timed out. Please try again later."}
+    
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to fetch data from EIA API: {e}")
+        return {"error": f"Failed to fetch data from EIA API: {str(e)}"}
+    
+    if not balancing_authorities:
+        logging.warning("No balancing authorities found.")
+        return {"error": "No balancing authorities found in EIA data."}
+    
+    logging.info(f"Found {len(balancing_authorities)} balancing authorities.")
+    return {"balancing_authorities": sorted(balancing_authorities)}
