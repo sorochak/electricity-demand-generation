@@ -1,13 +1,29 @@
 from fastapi import APIRouter, Query, HTTPException
 import logging
 import pandas as pd
-from backend.services.eia_service import get_eia_grid_mix_timeseries
+from backend.services.eia_service import get_eia_grid_mix_timeseries, get_balancing_authorities
 
 router = APIRouter()
 
 @router.get("/health")
 def health_check():
     return {"status": "FastAPI is running!"}
+
+@router.get("/balancing-authorities")
+def fetch_balancing_authorities():
+    """
+    API endpoint to fetch a list of unique balancing authorities.
+
+    Returns:
+    - JSON: { "balancing authorities: [...] } or { "error": "..." }
+    """
+    result = get_balancing_authorities()
+
+    # Check if the result is an error message
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+    
+    return result
 
 @router.get("/grid-mix")
 def fetch_grid_mix(
