@@ -62,6 +62,30 @@ uvicorn backend.main:app --reload
 
 The API will be available at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
+## Running with Docker
+
+You can run the FastAPI backend in a container using Docker
+
+### Build the Docker Image
+
+Run the following command from the `backend/` directory (where the Dockerfile is located):
+
+```sh
+docker build -t fastapi-electricity .
+```
+
+### Run the Container
+
+To start the FastAPI server inside a Docker container:
+
+```sh
+docker run --env-file .env -p 8000:8000 fastapi-electricity
+```
+
+### Accessing the API
+
+Once the container is running, you can access the API at http://127.0.0.1:8000
+
 ## API Endpoints
 
 ### Health Check
