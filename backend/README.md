@@ -79,7 +79,7 @@ docker build -t fastapi-electricity .
 To start the FastAPI server inside a Docker container:
 
 ```sh
-docker run -p 8000:8000 fastapi-electricity
+docker run --env-file .env -p 8000:8000 fastapi-electricity
 ```
 
 ### Accessing the API
