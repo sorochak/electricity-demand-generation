@@ -9,3 +9,9 @@ def test_root():
     response = test_client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "Welcome to the EIA Electricity Data API"}
+
+def test_health_check():
+    """Test the health (/health) endpoint."""
+    response = test_client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "FastAPI is running!"}
