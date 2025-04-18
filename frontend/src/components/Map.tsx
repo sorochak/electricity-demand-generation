@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const Map = () => {
+const Map: React.FC = () => {
   useEffect(() => {
     const map = L.map("map").setView([37.8, -96], 4);
 
@@ -11,12 +11,17 @@ const Map = () => {
       attribution: "© OpenStreetMap contributors",
     }).addTo(map);
 
-    // Load GeoJSON (replace the URL with your API endpoint)
-    fetch("/api/balancing-authorities-geojson")
-      .then((res) => res.json())
-      .then((data) => {
-        L.geoJSON(data).addTo(map);
-      });
+    //   // Load GeoJSON (replace the URL with your API endpoint)
+    //   fetch("/api/balancing-authorities-geojson")
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       L.geoJSON(data).addTo(map);
+    //     });
+    // }, []);
+
+    return () => {
+      map.remove();
+    };
   }, []);
 
   return <div id="map" style={{ height: "500px", width: "100%" }} />;
