@@ -12,7 +12,7 @@ This project provides a full-stack web application that allows users to fetch, a
   - Calculates CO2 emissions for fuel types.
   - Structured API responses with error handling.
   - Unit tests for API endpoints.
-- **React + TypeScript Frontend (Planned):**
+- **React + TypeScript Frontend:**
   - Select a balancing authority and fetch electricity grid data.
   - Interactive charts to visualize electricity demand and generation.
   - Modern UI with real-time data updates.
