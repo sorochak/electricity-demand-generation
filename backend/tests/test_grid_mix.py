@@ -18,7 +18,7 @@ def test_fetch_grid_mix_success(monkeypatch):
   # Apply the mock function to the actual function
   monkeypatch.setattr(backend.api.endpoints, "get_eia_grid_mix_timeseries", mock_get_eia_grid_mix_timeseries)
 
-  response = test_client.get("/grid-mix?balancing_authority=CISO")
+  response = test_client.get("/api/grid-mix?balancing_authority=CISO")
 
   # Ensure the request was successful
   assert response.status_code == 200
@@ -37,7 +37,7 @@ def test_fetch_grid_mix_failure(monkeypatch):
   # Apply the mock function to the actual function
   monkeypatch.setattr(backend.api.endpoints, "get_eia_grid_mix_timeseries", mock_get_eia_grid_mix_timeseries)
 
-  response = test_client.get("/grid-mix?balancing_authority=CISO")
+  response = test_client.get("/api/grid-mix?balancing_authority=CISO")
 
   # Ensure the response contains an error message
   assert response.status_code == 500
@@ -47,7 +47,7 @@ def test_fetch_grid_mix_failure(monkeypatch):
 def test_fetch_grid_mix_missing_param():
   """Test the /grid-mix endpoint when the balancing_authority parameter is missing."""
 
-  response = test_client.get("/grid-mix") # Missing `balancing_authority`
+  response = test_client.get("/api/grid-mix") # Missing `balancing_authority`
 
   # Ensure it returns a 422 error (Unprocessable Entity)
   assert response.status_code == 422
