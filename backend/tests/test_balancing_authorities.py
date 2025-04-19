@@ -7,7 +7,7 @@ test_client = TestClient(app)
 
 def test_fetch_balancing_authorities_success():
     """Test the /balancing-authorities endpoint."""
-    response = test_client.get("/balancing-authorities")
+    response = test_client.get("/api/balancing-authorities")
 
     # Ensure the request was successful
     assert response.status_code == 200
