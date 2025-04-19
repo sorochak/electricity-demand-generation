@@ -31,7 +31,7 @@ def test_fetch_balancing_authorities_failure(monkeypatch):
     # Apply the mock function to the actual function
     monkeypatch.setattr(backend.api.endpoints, "get_balancing_authorities", mock_get_balancing_authorities)
 
-    response = test_client.get("/balancing-authorities")
+    response = test_client.get("/api/balancing-authorities")
     
     assert response.status_code == 500
     assert response.json() == {"detail": "Simulated API failure"}
@@ -47,7 +47,7 @@ def test_fetch_balancing_authorities_empty_list(monkeypatch):
     # Monkeypatch the function
     monkeypatch.setattr(backend.api.endpoints, "get_balancing_authorities", mock_get_balancing_authorities)
 
-    response = test_client.get("/balancing-authorities")
+    response = test_client.get("/api/balancing-authorities")
 
     assert response.status_code == 200
     assert response.json() == {"balancing_authorities": []}
