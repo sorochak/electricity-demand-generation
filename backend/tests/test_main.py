@@ -12,6 +12,6 @@ def test_root():
 
 def test_health_check():
     """Test the health (/health) endpoint."""
-    response = test_client.get("/health")
+    response = test_client.get("/api/health")
     assert response.status_code == 200
     assert response.json() == {"status": "FastAPI is running!"}
