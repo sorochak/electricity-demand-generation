@@ -66,7 +66,6 @@ This workflow runs automatically when you push changes to `main`. If you encount
 ## Future Improvements
 
 - Develop the Frontend UI: Build out the planned React + TypeScript interface.
-- Implement FastAPI caching for improved performance
 - **Add CO2e Emissions Calculations:**
   - Map fuel types to CO2e emission factors
   - Compute total CO2e emissions and CO2e per MWh (CO2e/kWh)
