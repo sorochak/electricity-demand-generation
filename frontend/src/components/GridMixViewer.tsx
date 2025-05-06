@@ -1,5 +1,6 @@
-import { Alert, CircularProgress, Paper, Typography } from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
 import type { GridMixEntry } from "../types/gridMix";
+import GridMixTable from "./GridMixTable";
 
 type Props = {
   data: GridMixEntry[];
@@ -23,16 +24,7 @@ const GridMixViewer: React.FC<Props> = ({
       </Alert>
     );
   }
-  return (
-    <Paper sx={{ p: 3, mt: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Grid Mix Data (Raw View)
-      </Typography>
-      <pre style={{ maxHeight: 300, overflow: "auto", textAlign: "left" }}>
-        {JSON.stringify(data.slice(0, 20), null, 2)}
-      </pre>
-    </Paper>
-  );
+  return <GridMixTable data={data} />;
 };
 
 export default GridMixViewer;
