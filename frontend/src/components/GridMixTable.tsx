@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import {
   Table,
   TableHead,
@@ -7,6 +8,8 @@ import {
   TableContainer,
   Paper,
   Typography,
+  TableSortLabel,
+  Box,
 } from "@mui/material";
 import type { GridMixEntry } from "../types/gridMix";
 
@@ -14,7 +17,48 @@ type Props = {
   data: GridMixEntry[];
 };
 
+const headerCellStyle = {
+  fontWeight: "bold",
+  backgroundColor: "#f9f9f9",
+  borderBottom: "2px solid #ddd",
+  padding: "8px 16px",
+};
+
+const cellStyle = {
+  padding: "8px 16px",
+  whiteSpace: "nowrap",
+  borderBottom: "1px solid #eee",
+};
+
 const GridMixTable: React.FC<Props> = ({ data }) => {
+  const [orderBy, setOrderBy] = useState<keyof GridMixEntry>("timestamp");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
+
+  const handleSort = (property: keyof GridMixEntry) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortedData = useMemo(() => {
+    return [...data].sort((a, b) => {
+      const aVal = a[orderBy];
+      const bVal = b[orderBy];
+
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return order === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return order === "asc" ? aVal - bVal : bVal - aVal;
+      }
+
+      return 0;
+    });
+  }, [data, order, orderBy]);
+
   if (!data || data.length === 0) return null;
 
   return (
@@ -26,24 +70,65 @@ const GridMixTable: React.FC<Props> = ({ data }) => {
         <Table size="small" stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Fuel Type</TableCell>
-              <TableCell>Generation (MWh)</TableCell>
+              <TableCell
+                sortDirection={orderBy === "timestamp" ? order : false}
+                sx={{ ...headerCellStyle, pr: 4 }}
+              >
+                <Box display="flex" alignItems="center">
+                  <TableSortLabel
+                    active={orderBy === "timestamp"}
+                    direction={orderBy === "timestamp" ? order : "asc"}
+                    onClick={() => handleSort("timestamp")}
+                  >
+                    Date
+                  </TableSortLabel>
+                </Box>
+              </TableCell>
+
+              <TableCell
+                sortDirection={orderBy === "type-name" ? order : false}
+                sx={{ ...headerCellStyle, pr: 4 }}
+              >
+                <Box display="flex" alignItems="center">
+                  <TableSortLabel
+                    active={orderBy === "type-name"}
+                    direction={orderBy === "type-name" ? order : "asc"}
+                    onClick={() => handleSort("type-name")}
+                  >
+                    Fuel Type
+                  </TableSortLabel>
+                </Box>
+              </TableCell>
+
+              <TableCell
+                sortDirection={orderBy === "Generation (MWh)" ? order : false}
+                sx={{ ...headerCellStyle, pr: 4 }}
+              >
+                <Box display="flex" alignItems="center">
+                  <TableSortLabel
+                    active={orderBy === "Generation (MWh)"}
+                    direction={orderBy === "Generation (MWh)" ? order : "asc"}
+                    onClick={() => handleSort("Generation (MWh)")}
+                  >
+                    Generation (MWh)
+                  </TableSortLabel>
+                </Box>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((entry, index) => (
+            {sortedData.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>
-                  {new Date(entry.timestamp).toLocaleDateString("en-US", {
+                <TableCell sx={cellStyle}>
+                  {new Date(row.timestamp).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
                   })}
                 </TableCell>
-                <TableCell>{entry["type-name"]}</TableCell>
-                <TableCell>
-                  {entry["Generation (MWh)"].toLocaleString()}
+                <TableCell sx={cellStyle}>{row["type-name"]}</TableCell>
+                <TableCell sx={cellStyle}>
+                  {row["Generation (MWh)"].toLocaleString()}
                 </TableCell>
               </TableRow>
             ))}
