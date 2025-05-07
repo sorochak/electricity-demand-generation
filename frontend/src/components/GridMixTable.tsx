@@ -17,12 +17,15 @@ type Props = {
   data: GridMixEntry[];
 };
 
-const headerCellStyle = {
+const headerCellStyle = (theme) => ({
   fontWeight: "bold",
-  backgroundColor: "#f9f9f9",
-  borderBottom: "2px solid #ddd",
+  backgroundColor:
+    theme.palette.mode === "dark" ? theme.palette.grey[900] : "#f9f9f9",
+  color: theme.palette.text.primary,
+  borderBottom: "2px solid",
+  borderColor: theme.palette.divider,
   padding: "8px 16px",
-};
+});
 
 const cellStyle = {
   padding: "8px 16px",
@@ -72,7 +75,7 @@ const GridMixTable: React.FC<Props> = ({ data }) => {
             <TableRow>
               <TableCell
                 sortDirection={orderBy === "timestamp" ? order : false}
-                sx={{ ...headerCellStyle, pr: 4 }}
+                sx={(theme) => ({ ...headerCellStyle(theme), pr: 4 })}
               >
                 <Box display="flex" alignItems="center">
                   <TableSortLabel
@@ -87,7 +90,7 @@ const GridMixTable: React.FC<Props> = ({ data }) => {
 
               <TableCell
                 sortDirection={orderBy === "type-name" ? order : false}
-                sx={{ ...headerCellStyle, pr: 4 }}
+                sx={(theme) => ({ ...headerCellStyle(theme), pr: 4 })}
               >
                 <Box display="flex" alignItems="center">
                   <TableSortLabel
@@ -102,7 +105,7 @@ const GridMixTable: React.FC<Props> = ({ data }) => {
 
               <TableCell
                 sortDirection={orderBy === "Generation (MWh)" ? order : false}
-                sx={{ ...headerCellStyle, pr: 4 }}
+                sx={(theme) => ({ ...headerCellStyle(theme), pr: 4 })}
               >
                 <Box display="flex" alignItems="center">
                   <TableSortLabel
