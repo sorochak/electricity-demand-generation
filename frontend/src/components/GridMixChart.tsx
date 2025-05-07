@@ -30,9 +30,6 @@ const GridMixChart: React.FC<Props> = ({ data }) => {
     if (!data.length) return;
 
     // Parse date strings if needed
-
-    const fuelTypes = [...new Set(data.map((d) => d.type_name))];
-    console.log("⚡ Unique fuel types in raw data:", fuelTypes);
     const parsedData = data.map((d) => ({
       ...d,
       date: typeof d.date === "string" ? new Date(d.date) : d.date,
@@ -74,8 +71,6 @@ const GridMixChart: React.FC<Props> = ({ data }) => {
     });
 
     chartRef.current?.appendChild(plot);
-
-    console.log("parsedData sample:", parsedData.slice(0, 10));
 
     return () => {
       plot.remove();
