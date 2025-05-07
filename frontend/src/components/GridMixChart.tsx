@@ -89,34 +89,49 @@ const GridMixChart: React.FC<Props> = ({ data }) => {
           Generation Trends by Fuel Type
         </Typography>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={9}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            gap: 4,
+            maxWidth: 1000,
+            mx: "auto",
+          }}
+        >
+          <Box sx={{ flex: "1 1 600px", minWidth: "300px" }}>
             <Box ref={chartRef} sx={{ overflowX: "auto" }} />
-          </Grid>
+          </Box>
 
-          <Grid item xs={12} md={3}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              {fuelLegend.map(({ label, color }) => (
+          <Box
+            sx={{
+              flex: "0 1 200px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            {fuelLegend.map(({ label, color }) => (
+              <Box
+                key={label}
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
                 <Box
-                  key={label}
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    sx={{
-                      width: 14,
-                      height: 14,
-                      bgcolor: color,
-                      borderRadius: 0.5,
-                    }}
-                  />
-                  <Typography variant="body2" color="text.primary">
-                    {label}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
+                  sx={{
+                    width: 14,
+                    height: 14,
+                    bgcolor: color,
+                    borderRadius: 0.5,
+                  }}
+                />
+                <Typography variant="body2" color="text.primary">
+                  {label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );
