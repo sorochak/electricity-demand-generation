@@ -12,12 +12,13 @@ import {
   Box,
 } from "@mui/material";
 import type { GridMixEntry } from "../types/gridMix";
+import type { Theme } from "@mui/material/styles";
 
 type Props = {
   data: GridMixEntry[];
 };
 
-const headerCellStyle = (theme) => ({
+const headerCellStyle = (theme: Theme) => ({
   fontWeight: "bold",
   backgroundColor:
     theme.palette.mode === "dark" ? theme.palette.grey[900] : "#f9f9f9",
