@@ -1,4 +1,4 @@
-import { Alert, CircularProgress, Box } from "@mui/material";
+import { Alert, CircularProgress, Box, Typography } from "@mui/material";
 import type { GridMixEntry } from "../types/gridMix";
 import GridMixTable from "./GridMixTable";
 import GridMixChart from "./GridMixChart";
@@ -16,9 +16,20 @@ const GridMixViewer: React.FC<Props> = ({
   error,
   selectedBA,
 }) => {
-  if (loading) return <CircularProgress sx={{ mt: 2, mb: 2 }} />;
+  if (loading) return <CircularProgress sx={{ mt: 4 }} />;
   if (error) return <Alert severity="error">{error}</Alert>;
-  if (selectedBA && data.length === 0) {
+
+  if (!selectedBA) {
+    return (
+      <Box sx={{ mt: 6, textAlign: "center", color: "text.secondary" }}>
+        <Typography variant="body1">
+          Select a balancing authority to view generation data.
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (data.length === 0) {
     return (
       <Alert severity="info" sx={{ mt: 2, mb: 2 }}>
         No generation data available for the selected balancing authority.
