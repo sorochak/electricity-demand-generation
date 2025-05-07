@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as Plot from "@observablehq/plot";
-import { Box, Card, CardContent, Typography, Grid } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 
 interface GridDataPoint {
   date: string | Date; // Can pass in ISO string or Date object
