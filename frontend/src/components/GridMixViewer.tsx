@@ -1,6 +1,7 @@
-import { Alert, CircularProgress } from "@mui/material";
+import { Alert, CircularProgress, Box } from "@mui/material";
 import type { GridMixEntry } from "../types/gridMix";
 import GridMixTable from "./GridMixTable";
+import GridMixChart from "./GridMixChart";
 
 type Props = {
   data: GridMixEntry[];
@@ -24,7 +25,20 @@ const GridMixViewer: React.FC<Props> = ({
       </Alert>
     );
   }
-  return <GridMixTable data={data} />;
+
+  // Transform data for the chart
+  const chartData = data.map((entry) => ({
+    date: new Date(entry.timestamp),
+    type_name: entry["type-name"],
+    generation_mwh: entry["Generation (MWh)"],
+  }));
+
+  return (
+    <Box sx={{ mt: 4 }}>
+      <GridMixChart data={chartData} />
+      <GridMixTable data={data} />
+    </Box>
+  );
 };
 
 export default GridMixViewer;
